@@ -1,4 +1,22 @@
+using MongoDB.Driver;
+using ShoppingCart.Configurations;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Bind MongoSettings
+builder.Services.Configure<MongoSettings>(
+    builder.Configuration.GetSection("MongoSettings"));
+
+var mongoSettings = builder.Configuration.GetSection("MongoSettings").Get<MongoSettings>();
+
+builder.Services.AddSingleton<IMongoClient>(sp =>
+    new MongoClient(mongoSettings.ConnectionString));
+
+builder.Services.AddSingleton(sp =>
+{
+    var client = sp.GetRequiredService<IMongoClient>();
+    return client.GetDatabase(mongoSettings.DatabaseName);
+});
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -15,9 +33,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
