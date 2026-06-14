@@ -1,7 +1,60 @@
 ﻿################################################################################
-# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+# .gitignore for Visual Studio / .NET projects
+# Exclude files that do not need to be committed to source control
 ################################################################################
 
-/.vs
-/ShoppingCart/bin/Debug/net10.0
-/ShoppingCart/obj/Debug/net10.0
+# Visual Studio cache and user-specific files
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build output
+**/bin/
+**/obj/
+**/out/
+**/publish/
+*.dll
+*.exe
+
+# NuGet
+*.nupkg
+packages/
+
+# Rider / JetBrains
+.idea/
+*.DotSettings.user
+
+# VS Code
+.vscode/
+
+# ASP.NET / user secrets
+appsettings.Development.json
+Local.settings.json
+secrets.json
+secrets.*
+Properties/launchSettings.json
+
+# Logs, databases and test results
+*.log
+TestResults/
+*.sql
+*.sqlite
+*.db
+
+# Coverage and tooling
+*.coverage
+*.coveragexml
+coverage*.json
+
+# OS generated files
+Thumbs.db
+.DS_Store
+
+# Node
+node_modules/
+
+# Misc
+*.pid
+*.seed
