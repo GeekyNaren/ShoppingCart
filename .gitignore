@@ -1,4 +1,4 @@
-﻿################################################################################
+################################################################################
 # .gitignore for Visual Studio / .NET projects
 # Exclude files that do not need to be committed to source control
 ################################################################################
@@ -55,6 +55,11 @@ Thumbs.db
 # Node
 node_modules/
 
+# Generated AssemblyInfo files and other generated source
+*AssemblyInfo*.cs
+*.AssemblyInfo.*
+
 # Misc
 *.pid
 *.seed
+
