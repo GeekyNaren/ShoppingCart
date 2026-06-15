@@ -1,6 +1,8 @@
-﻿namespace ShoppingCart.Repositories
+﻿using ShoppingCart.Interfaces;
+
+namespace ShoppingCart.Repositories
 {
-    public class ProductRepository
+    public class ProductRepository : IProductRepository
     {
     }
 }

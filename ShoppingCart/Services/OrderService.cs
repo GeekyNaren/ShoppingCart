@@ -1,6 +1,8 @@
-﻿namespace ShoppingCart.Services
+﻿using ShoppingCart.Interfaces;
+
+namespace ShoppingCart.Services
 {
-    public class OrderService
+    public class OrderService : IOrderService
     {
     }
 }

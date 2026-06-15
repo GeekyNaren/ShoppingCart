@@ -1,5 +1,8 @@
 using MongoDB.Driver;
 using ShoppingCart.Configurations;
+using ShoppingCart.Interfaces;
+using ShoppingCart.Repositories;
+using ShoppingCart.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +20,18 @@ builder.Services.AddSingleton(sp =>
     var client = sp.GetRequiredService<IMongoClient>();
     return client.GetDatabase(mongoSettings.DatabaseName);
 });
+
+// Register repositories
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+// Register services
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // Add services to the container.
 builder.Services.AddControllers();

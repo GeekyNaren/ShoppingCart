@@ -1,6 +1,10 @@
-﻿namespace ShoppingCart.Interfaces
+﻿using ShoppingCart.Models;
+
+namespace ShoppingCart.Interfaces
 {
-    public interface IUserRepository
+    public interface IUserRepository : IBaseMongoRepository<User>
     {
+        Task<User?> GetByEmailAsync(string email);
+        Task<User?> GetByUsernameAsync(string username);
     }
 }
