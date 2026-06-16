@@ -34,5 +34,12 @@ namespace ShoppingCart.Controllers
                 return Conflict(new { error = ex.Message });
             }
         }
+
+        [HttpGet("users")]
+        public async Task<ActionResult> GetUsers()
+        {
+            var response = await _userService.GetUsers();
+            return Ok(response);
+        }
     }
 }

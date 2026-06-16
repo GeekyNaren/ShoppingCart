@@ -1,7 +1,8 @@
-﻿using System.Security.Cryptography;
-using System.Text;
-using ShoppingCart.Interfaces;
+﻿using ShoppingCart.Interfaces;
 using ShoppingCart.Models;
+using ShoppingCart.Models.Dtos;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace ShoppingCart.Services
 {
@@ -41,6 +42,20 @@ namespace ShoppingCart.Services
             return user;
         }
 
+        public async Task<List<UserDto>> GetUsers()
+        {
+            var userList = await _userRepository.GetAllAsync();
+            var dtos = userList.Select(u => new UserDto
+            {
+                Id = u.Id,
+                Username = u.Username,
+                Email = u.Email,
+                Role = u.Role,
+                CreatedAt = u.CreatedAt
+            }).ToList();
+
+            return dtos;
+        }
         private static string HashPassword(string password)
         {
             // PBKDF2
