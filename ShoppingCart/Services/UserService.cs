@@ -15,33 +15,26 @@ namespace ShoppingCart.Services
             _userRepository = userRepository;
         }
 
-        public async Task<User> RegisterAsync(string username, string email, string password, string role)
+        #region Public Methods  
+        public async Task<User> RegisterUser(RegisterRequest request)
         {
-            // basic validation
-            if (string.IsNullOrWhiteSpace(username)) throw new ArgumentException("username is required");
-            if (string.IsNullOrWhiteSpace(email)) throw new ArgumentException("email is required");
-            if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("password is required");
-
-            var existingByEmail = await _userRepository.GetByEmailAsync(email);
-            if (existingByEmail != null) throw new InvalidOperationException("Email already in use");
-
-            var existingByUsername = await _userRepository.GetByUsernameAsync(username);
-            if (existingByUsername != null) throw new InvalidOperationException("Username already in use");
-
+            var duplicateRecord = await GetUsers();
+            if (duplicateRecord.Any(x => x.Username == request.Username || x.Email == request.Email))
+            {
+                throw new Exception("Username or Email already exists.");
+            }
             var user = new User
             {
                 Id = Guid.NewGuid().ToString(),
-                Username = username,
-                Email = email,
-                PasswordHash = HashPassword(password),
-                Role = role,
+                Username = request.Username,
+                Email = request.Email,
+                PasswordHash = HashPassword(request.Password),
+                Role = request.Role,
                 CreatedAt = DateTime.UtcNow
             };
-
             await _userRepository.AddAsync(user);
             return user;
         }
-
         public async Task<List<UserDto>> GetUsers()
         {
             var userList = await _userRepository.GetAllAsync();
@@ -56,6 +49,9 @@ namespace ShoppingCart.Services
 
             return dtos;
         }
+        #endregion
+
+        #region Private Methods
         private static string HashPassword(string password)
         {
             // PBKDF2
@@ -71,5 +67,6 @@ namespace ShoppingCart.Services
 
             return Convert.ToBase64String(result);
         }
+        #endregion
     }
 }

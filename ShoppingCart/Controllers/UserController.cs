@@ -18,21 +18,14 @@ namespace ShoppingCart.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+        public async Task<ActionResult> Register([FromBody] RegisterRequest request)
         {
-            try
+            var response = await _userService.RegisterUser(request);
+            if (response == null)
             {
-                var user = await _userService.RegisterAsync(request.Username, request.Email, request.Password, request.Role);
-                return CreatedAtAction(null, new { id = user.Id }, new { user.Id, user.Username, user.Email, user.Role, user.CreatedAt });
+                return BadRequest(response);
             }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Conflict(new { error = ex.Message });
-            }
+            return Ok(response);
         }
 
         [HttpGet("users")]
