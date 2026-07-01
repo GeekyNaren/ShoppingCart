@@ -5,7 +5,7 @@ namespace ShoppingCart.Interfaces
 {
     public interface IUserService
     {
-        Task<User> RegisterAsync(string username, string email, string password, string role);
+        Task<User> RegisterUser(RegisterRequest request);
         Task<List<UserDto>> GetUsers();
     }
 }
