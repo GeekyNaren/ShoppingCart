@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ShoppingCart.Interfaces;
 using ShoppingCart.Models.Dtos;
 
@@ -21,7 +20,7 @@ namespace ShoppingCart.Controllers
         public async Task<ActionResult> Register([FromBody] RegisterRequest request)
         {
             var response = await _userService.RegisterUser(request);
-            if (response == null)
+            if (response == null || !response.Success)
             {
                 return BadRequest(response);
             }
@@ -32,6 +31,17 @@ namespace ShoppingCart.Controllers
         public async Task<ActionResult> GetUsers()
         {
             var response = await _userService.GetUsers();
+            return Ok(response);
+        }
+
+        [HttpGet("userById")]
+        public async Task<ActionResult> GetUserById(string userId)
+        {
+            var response = await _userService.GetUserById(userId);
+            if (!response.Success)
+            {
+                return NotFound(response);
+            }
             return Ok(response);
         }
     }
