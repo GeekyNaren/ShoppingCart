@@ -1,6 +1,7 @@
 ﻿using ShoppingCart.Interfaces;
 using ShoppingCart.Models;
 using ShoppingCart.Models.Dtos;
+using ShoppingCart.Models.Responses;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -16,13 +17,20 @@ namespace ShoppingCart.Services
         }
 
         #region Public Methods  
-        public async Task<User> RegisterUser(RegisterRequest request)
+        public async Task<ServiceResponse<bool>> RegisterUser(RegisterRequest request)
         {
-            var duplicateRecord = await GetUsers();
+            var usersResponse = await GetUsers();
+            if (!usersResponse.Success)
+            {
+                return ServiceResponse<bool>.Fail("Unable to verify existing users.");
+            }
+
+            var duplicateRecord = usersResponse.Data ?? new List<UserDto>();
             if (duplicateRecord.Any(x => x.Username == request.Username || x.Email == request.Email))
             {
-                throw new Exception("Username or Email already exists.");
+                return ServiceResponse<bool>.Fail("Username or Email already exists.");
             }
+
             var user = new User
             {
                 Id = Guid.NewGuid().ToString(),
@@ -32,10 +40,11 @@ namespace ShoppingCart.Services
                 Role = request.Role,
                 CreatedAt = DateTime.UtcNow
             };
+
             await _userRepository.AddAsync(user);
-            return user;
+            return ServiceResponse<bool>.Ok(true);
         }
-        public async Task<List<UserDto>> GetUsers()
+        public async Task<ServiceResponse<List<UserDto>>> GetUsers()
         {
             var userList = await _userRepository.GetAllAsync();
             var dtos = userList.Select(u => new UserDto
@@ -46,8 +55,24 @@ namespace ShoppingCart.Services
                 Role = u.Role,
                 CreatedAt = u.CreatedAt
             }).ToList();
-
-            return dtos;
+            return ServiceResponse<List<UserDto>>.Ok(dtos);
+        }
+        public async Task<ServiceResponse<UserDto>> GetUserById(string userId)
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null)
+            {
+                return ServiceResponse<UserDto>.Fail("User not found.");
+            }
+            var userDto = new UserDto
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Email = user.Email,
+                Role = user.Role,
+                CreatedAt = user.CreatedAt
+            };
+            return ServiceResponse<UserDto>.Ok(userDto);
         }
         #endregion
 
