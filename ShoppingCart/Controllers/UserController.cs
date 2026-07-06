@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShoppingCart.Interfaces;
 using ShoppingCart.Models.Dtos;
+using ShoppingCart.Services;
 
 namespace ShoppingCart.Controllers
 {
@@ -42,6 +43,13 @@ namespace ShoppingCart.Controllers
             {
                 return NotFound(response);
             }
+            return Ok(response);
+        }
+
+        [HttpDelete("deleteUser")]
+        public async Task<ActionResult> DeleteUser(string userId)
+        {
+            var response = await _userService.DeleteUser(userId);
             return Ok(response);
         }
     }

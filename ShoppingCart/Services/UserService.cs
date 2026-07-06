@@ -74,6 +74,16 @@ namespace ShoppingCart.Services
             };
             return ServiceResponse<UserDto>.Ok(userDto);
         }
+        public async Task<ServiceResponse<bool>> DeleteUser(string userId)
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null)
+            {
+                return ServiceResponse<bool>.Fail("User not found.");
+            }
+            await _userRepository.DeleteAsync(userId);
+            return ServiceResponse<bool>.Ok(true);
+        }
         #endregion
 
         #region Private Methods

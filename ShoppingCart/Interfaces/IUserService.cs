@@ -8,5 +8,6 @@ namespace ShoppingCart.Interfaces
         Task<ServiceResponse<bool>> RegisterUser(RegisterRequest request);
         Task<ServiceResponse<List<UserDto>>> GetUsers();
         Task<ServiceResponse<UserDto>> GetUserById(string userId);
+        Task<ServiceResponse<bool>> DeleteUser(string userId);
     }
 }
