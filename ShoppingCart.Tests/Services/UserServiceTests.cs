@@ -1,12 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Moq;
 using ShoppingCart.Interfaces;
 using ShoppingCart.Models;
 using ShoppingCart.Models.Dtos;
 using ShoppingCart.Services;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace ShoppingCart.Tests.Services
