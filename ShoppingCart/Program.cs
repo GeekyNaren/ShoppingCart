@@ -1,6 +1,7 @@
 using MongoDB.Driver;
 using ShoppingCart.Configurations;
 using ShoppingCart.Interfaces;
+using ShoppingCart.Middlewares;
 using ShoppingCart.Repositories;
 using ShoppingCart.Services;
 
@@ -47,7 +48,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
+app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
