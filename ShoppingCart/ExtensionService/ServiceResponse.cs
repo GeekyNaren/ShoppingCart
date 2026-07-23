@@ -1,4 +1,4 @@
-namespace ShoppingCart.Models.Responses
+namespace ShoppingCart.ExtensionService
 {
     public class ServiceResponse<T>
     {

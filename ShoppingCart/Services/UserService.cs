@@ -1,7 +1,7 @@
-﻿using ShoppingCart.Interfaces;
+﻿using ShoppingCart.ExtensionService;
+using ShoppingCart.Interfaces;
 using ShoppingCart.Models;
 using ShoppingCart.Models.Dtos;
-using ShoppingCart.Models.Responses;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -17,7 +17,7 @@ namespace ShoppingCart.Services
         }
 
         #region Public Methods  
-        public async Task<ServiceResponse<bool>> RegisterUser(RegisterRequest request)
+        public async Task<ServiceResponse<bool>> RegisterUser(UserRegisterRequestDto request)
         {
             var usersResponse = await GetUsers();
             if (!usersResponse.Success)
@@ -25,7 +25,7 @@ namespace ShoppingCart.Services
                 return ServiceResponse<bool>.Fail("Unable to verify existing users.");
             }
 
-            var duplicateRecord = usersResponse.Data ?? new List<UserDto>();
+            var duplicateRecord = usersResponse.Data ?? new List<UserResponseDto>();
             if (duplicateRecord.Any(x => x.Username == request.Username || x.Email == request.Email))
             {
                 return ServiceResponse<bool>.Fail("Username or Email already exists.");
@@ -37,17 +37,16 @@ namespace ShoppingCart.Services
                 Username = request.Username,
                 Email = request.Email,
                 PasswordHash = HashPassword(request.Password),
-                Role = request.Role,
                 CreatedAt = DateTime.UtcNow
             };
 
             await _userRepository.AddAsync(user);
             return ServiceResponse<bool>.Ok(true);
         }
-        public async Task<ServiceResponse<List<UserDto>>> GetUsers()
+        public async Task<ServiceResponse<List<UserResponseDto>>> GetUsers()
         {
             var userList = await _userRepository.GetAllAsync();
-            var dtos = userList.Select(u => new UserDto
+            var dtos = userList.Select(u => new UserResponseDto
             {
                 Id = u.Id,
                 Username = u.Username,
@@ -55,16 +54,16 @@ namespace ShoppingCart.Services
                 Role = u.Role,
                 CreatedAt = u.CreatedAt
             }).ToList();
-            return ServiceResponse<List<UserDto>>.Ok(dtos);
+            return ServiceResponse<List<UserResponseDto>>.Ok(dtos);
         }
-        public async Task<ServiceResponse<UserDto>> GetUserById(string userId)
+        public async Task<ServiceResponse<UserResponseDto>> GetUserById(string userId)
         {
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null)
             {
-                return ServiceResponse<UserDto>.Fail("User not found.");
+                return ServiceResponse<UserResponseDto>.Fail("User not found.");
             }
-            var userDto = new UserDto
+            var userDto = new UserResponseDto
             {
                 Id = user.Id,
                 Username = user.Username,
@@ -72,7 +71,7 @@ namespace ShoppingCart.Services
                 Role = user.Role,
                 CreatedAt = user.CreatedAt
             };
-            return ServiceResponse<UserDto>.Ok(userDto);
+            return ServiceResponse<UserResponseDto>.Ok(userDto);
         }
         public async Task<ServiceResponse<bool>> DeleteUser(string userId)
         {
