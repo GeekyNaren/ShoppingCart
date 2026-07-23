@@ -46,12 +46,11 @@ namespace ShoppingCart.Tests.Services
 
             var svc = new UserService(repoMock.Object);
 
-            var request = new RegisterRequest
+            var request = new UserRegisterRequestDto
             {
                 Username = "dup",
                 Email = "new@example.com",
                 Password = "password",
-                Role = "Customer"
             };
 
             var res = await svc.RegisterUser(request);
@@ -75,12 +74,11 @@ namespace ShoppingCart.Tests.Services
 
             var svc = new UserService(repoMock.Object);
 
-            var request = new RegisterRequest
+            var request = new UserRegisterRequestDto
             {
                 Username = "newuser",
                 Email = "new@example.com",
                 Password = "password",
-                Role = "Customer"
             };
 
             var res = await svc.RegisterUser(request);

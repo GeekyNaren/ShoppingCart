@@ -1,6 +1,6 @@
 ﻿namespace ShoppingCart.Models.Dtos
 {
-    public class UserDto
+    public class UserResponseDto
     {
         public string Id { get; set; }  // MongoDB ObjectId as string
         public string Username { get; set; }
