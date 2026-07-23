@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using ShoppingCart.Interfaces;
 using ShoppingCart.Models;
 using ShoppingCart.Models.Dtos;
-using ShoppingCart.Services;
 using System.Security.Claims;
 
 namespace ShoppingCart.Controllers
