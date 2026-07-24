@@ -10,10 +10,12 @@ namespace ShoppingCart.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly ICurrentUserService _currentUserService;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, ICurrentUserService currentUserService)
         {
             _userRepository = userRepository;
+            _currentUserService = currentUserService;
         }
 
         #region Public Methods  
@@ -45,6 +47,11 @@ namespace ShoppingCart.Services
         }
         public async Task<ServiceResponse<List<UserResponseDto>>> GetUsers()
         {
+            var userid = _currentUserService.UserId;
+            if (_currentUserService.Role != "Admin")
+            {
+                return ServiceResponse<List<UserResponseDto>>.Fail("Unauthorized access.");
+            }
             var userList = await _userRepository.GetAllAsync();
             var dtos = userList.Select(u => new UserResponseDto
             {
