@@ -1,15 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShoppingCart.Interfaces;
-using ShoppingCart.Models;
 using ShoppingCart.Models.Dtos;
-using System.Security.Claims;
 
 namespace ShoppingCart.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -31,6 +28,7 @@ namespace ShoppingCart.Controllers
         }
 
         [HttpGet("users")]
+        [Authorize]
         public async Task<ActionResult> GetUsers()
         {
             var response = await _userService.GetUsers();
@@ -49,7 +47,7 @@ namespace ShoppingCart.Controllers
         }
 
         [HttpDelete("deleteUser")]
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<ActionResult> DeleteUser(string userId)
         {
             var response = await _userService.DeleteUser(userId);

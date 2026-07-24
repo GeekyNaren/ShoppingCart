@@ -47,7 +47,6 @@ namespace ShoppingCart.Services
         }
         public async Task<ServiceResponse<List<UserResponseDto>>> GetUsers()
         {
-            var userid = _currentUserService.UserId;
             if (_currentUserService.Role != "Admin")
             {
                 return ServiceResponse<List<UserResponseDto>>.Fail("Unauthorized access.");
@@ -82,6 +81,10 @@ namespace ShoppingCart.Services
         }
         public async Task<ServiceResponse<bool>> DeleteUser(string userId)
         {
+            if(_currentUserService.Role != "Admin")
+            {
+                return ServiceResponse<bool>.Fail("Unauthorized access.");
+            }
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null)
             {
