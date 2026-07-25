@@ -1,16 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShoppingCart.Interfaces;
-using ShoppingCart.Models;
 using ShoppingCart.Models.Dtos;
-using ShoppingCart.Services;
-using System.Security.Claims;
 
 namespace ShoppingCart.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -32,6 +28,7 @@ namespace ShoppingCart.Controllers
         }
 
         [HttpGet("users")]
+        [Authorize]
         public async Task<ActionResult> GetUsers()
         {
             var response = await _userService.GetUsers();
@@ -50,35 +47,35 @@ namespace ShoppingCart.Controllers
         }
 
         [HttpDelete("deleteUser")]
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<ActionResult> DeleteUser(string userId)
         {
             var response = await _userService.DeleteUser(userId);
             return Ok(response);
         }
 
-        //For admin Only
-        [HttpGet]
-        [Route("Admins")]
-        [Authorize(Roles = "Admin")]
-        public IActionResult AdminEndPoint()
-        {
-            var currentUser = GetCurrentUser();
-            return Ok($"Hi you are an {currentUser.Role}"); 
-        }
-        private UserModel GetCurrentUser()
-        {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            if (identity != null)
-            {
-                var userClaims = identity.Claims;
-                return new UserModel
-                {
-                    Username = userClaims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value,
-                    Role = userClaims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value
-                };
-            }
-            return null;
-        }
+        ////For admin Only
+        //[HttpGet]
+        //[Route("Admins")]
+        //[Authorize(Roles = "Admin")]
+        //public IActionResult AdminEndPoint()
+        //{
+        //    var currentUser = GetCurrentUser();
+        //    return Ok($"Hi you are an {currentUser.Role}"); 
+        //}
+        //private UserModel GetCurrentUser()
+        //{
+        //    var identity = HttpContext.User.Identity as ClaimsIdentity;
+        //    if (identity != null)
+        //    {
+        //        var userClaims = identity.Claims;
+        //        return new UserModel
+        //        {
+        //            Username = userClaims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value,
+        //            Role = userClaims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value
+        //        };
+        //    }
+        //    return null;
+        //}
     }
 }
