@@ -43,7 +43,6 @@ namespace ShoppingCart.Services
         }
 
         public bool IsAuthenticated => Principal?.Identity?.IsAuthenticated == true;
-
         public UserModel? GetCurrentUserModel()
         {
             if (Principal == null)
