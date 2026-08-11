@@ -52,7 +52,6 @@ namespace ShoppingCart.Services
             {
                 Username = Username,
                 Role = Role,
-                // Do not populate password here
                 Password = null
             };
         }
