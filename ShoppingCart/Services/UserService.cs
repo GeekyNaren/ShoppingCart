@@ -21,16 +21,11 @@ namespace ShoppingCart.Services
         #region Public Methods  
         public async Task<ServiceResponse<bool>> RegisterUser(UserRegisterRequestDto request)
         {
-            var usersResponse = await GetUsers();
-            if (!usersResponse.Success)
+            // Check for duplicate username or email without requiring Admin role
+            var userList = await _userRepository.GetAllAsync();
+            if (userList.Any(x => x.Username == request.Username || x.Email == request.Email))
             {
-                return ServiceResponse<bool>.Fail("Unable to verify existing users.");
-            }
-
-            var duplicateRecord = usersResponse.Data ?? new List<UserResponseDto>();
-            if (duplicateRecord.Any(x => x.Username == request.Username || x.Email == request.Email))
-            {
-                return ServiceResponse<bool>.Fail("Username or Email already exists.");
+                return ServiceResponse<bool>.Fail("Username already exists with same credentials.");
             }
 
             var user = new User
@@ -39,6 +34,7 @@ namespace ShoppingCart.Services
                 Username = request.Username,
                 Email = request.Email,
                 PasswordHash = HashPassword(request.Password),
+                Role = request.Role ?? "Customer",
                 CreatedAt = DateTime.UtcNow
             };
 
