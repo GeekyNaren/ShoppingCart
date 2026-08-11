@@ -41,7 +41,7 @@ namespace ShoppingCart.ExtensionService
             {
                 Success = false,
                 Message = message,
-                Errors = errors?.ToList() ?? new List<string>()
+                Errors = errors?.ToList() ?? []
             };
         }
     }
