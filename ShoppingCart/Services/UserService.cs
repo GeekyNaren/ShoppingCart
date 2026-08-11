@@ -89,6 +89,57 @@ namespace ShoppingCart.Services
             await _userRepository.DeleteAsync(userId);
             return ServiceResponse<bool>.Ok(true);
         }
+
+        public async Task<ServiceResponse<UserResponseDto>> UpdateUser(UpdateUserRequestDto request)
+        {
+            // Check if user is authenticated
+            if (!_currentUserService.IsAuthenticated)
+            {
+                return ServiceResponse<UserResponseDto>.Fail("User is not authenticated.");
+            }
+
+            var currentUserId = _currentUserService.UserId;
+            var user = await _userRepository.GetByIdAsync(request.Id);
+
+            if (user == null)
+            {
+                return ServiceResponse<UserResponseDto>.Fail("User not found.");
+            }
+
+            // Allow users to update their own profile, or allow admins to update any user
+            if (currentUserId != request.Id && _currentUserService.Role != "Admin")
+            {
+                return ServiceResponse<UserResponseDto>.Fail("You can only update your own profile.");
+            }
+
+            // Check if new username or email already exists (exclude current user)
+            var existingUsers = await _userRepository.GetAllAsync();
+            if (existingUsers.Any(x => (x.Username == request.Username || x.Email == request.Email) && x.Id != request.Id))
+            {
+                return ServiceResponse<UserResponseDto>.Fail("Username or Email already exists.");
+            }
+
+            // Update user details
+            user.Username = request.Username;
+            user.Email = request.Email;
+            if (!string.IsNullOrEmpty(request.Password))
+            {
+                user.PasswordHash = HashPassword(request.Password);
+            }
+
+            await _userRepository.UpdateAsync(request.Id, user);
+
+            var userDto = new UserResponseDto
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Email = user.Email,
+                Role = user.Role,
+                CreatedAt = user.CreatedAt
+            };
+
+            return ServiceResponse<UserResponseDto>.Ok(userDto);
+        }
         #endregion
 
         #region Private Methods
