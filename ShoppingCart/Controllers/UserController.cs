@@ -54,6 +54,18 @@ namespace ShoppingCart.Controllers
             return Ok(response);
         }
 
+        [HttpPut("updateUser")]
+        [Authorize]
+        public async Task<ActionResult> UpdateUser([FromBody] UpdateUserRequestDto request)
+        {
+            var response = await _userService.UpdateUser(request);
+            if (!response.Success)
+            {
+                return BadRequest(response);
+            }
+            return Ok(response);
+        }
+
         ////For admin Only
         //[HttpGet]
         //[Route("Admins")]
