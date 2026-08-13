@@ -11,7 +11,6 @@ namespace ShoppingCart.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly ICurrentUserService _currentUserService;
-
         public UserService(IUserRepository userRepository, ICurrentUserService currentUserService)
         {
             _userRepository = userRepository;
