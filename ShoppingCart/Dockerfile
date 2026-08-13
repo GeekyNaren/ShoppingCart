@@ -1,32 +1,29 @@
 # Multi-stage Dockerfile for building and running ASP.NET Core application on Render.com
-# Default DOTNET_VERSION arg set to 8.0; change to 10.0 if your project targets net10.0 and an image is available
-ARG DOTNET_VERSION=8.0
+# This Dockerfile is placed inside the API project folder (ShoppingCart/)
+# Build ARG default set to 10.0 to match your project TFM (net10.0)
+ARG DOTNET_VERSION=10.0
 
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_VERSION} AS build
 WORKDIR /src
 
-# Copy csproj and restore (adjust the path if your .csproj is in a different folder)
-COPY ["ShoppingCart/ShoppingCart.csproj", "ShoppingCart/"]
-RUN dotnet restore "ShoppingCart/ShoppingCart.csproj"
+# Copy the project file and restore. When Dockerfile is inside the project folder,
+# copy the project file directly (ShoppingCart.csproj) for better layer caching.
+COPY ["ShoppingCart.csproj", "./"]
+RUN dotnet restore "ShoppingCart.csproj"
 
-# Copy the rest of the source code
+# Copy everything else and publish (no apphost for smaller image). Use --no-restore
+# because we've already restored above.
 COPY . .
-WORKDIR /src/ShoppingCart
-
-# Publish the app (no apphost to keep image portable)
-RUN dotnet publish "ShoppingCart.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "ShoppingCart.csproj" -c Release -o /app/publish /p:UseAppHost=false --no-restore
 
 # Runtime image (smaller)
 FROM mcr.microsoft.com/dotnet/aspnet:${DOTNET_VERSION} AS runtime
 WORKDIR /app
 
-# Bind to the PORT injected by Render.com
-# Render injects PORT at runtime; ASP.NET Core will use this environment variable
-ENV ASPNETCORE_URLS="http://+:$PORT"
-
 # Copy published output from build stage
 COPY --from=build /app/publish ./
 
-# Do not enable HTTPS or certificates in container; Render handles TLS termination
-# Entrypoint: replace ShoppingCart.dll with your project's main DLL if different
-ENTRYPOINT ["dotnet", "ShoppingCart.dll"]
+# Do not enable HTTPS or certificates inside the container; Render handles TLS termination.
+# Entrypoint uses /bin/sh -c so ${PORT} is expanded at container runtime, sets a sensible
+# default (5000) when PORT is not provided, exports ASPNETCORE_URLS, and execs dotnet
+ENTRYPOINT ["/bin/sh", "-c", "PORT=${PORT:-5000}; export ASPNETCORE_URLS=\"http://+:${PORT}\"; exec dotnet ShoppingCart.dll --urls \"http://+:${PORT}\""]
