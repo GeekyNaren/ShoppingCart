@@ -72,6 +72,7 @@ namespace ShoppingCart.Services
                 return null;
             }
 
+            _logger.LogInformation("User {Username} authenticated successfully.", userLogin.Username);
             return new UserModel
             {
                 Username = dbUser.Username,
