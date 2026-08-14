@@ -28,7 +28,7 @@ namespace ShoppingCart.Services
             if (userList.Any(x => x.Username == request.Username || x.Email == request.Email))
             {
                 _logger.LogWarning("Attempt to register duplicate user with username {Username} and email {Email}", request.Username, request.Email);
-                return ServiceResponse<bool>.Fail("Username already exists with same credentials.");
+                return ServiceResponse<bool>.Fail("User already exists with same credentials.");
             }
 
             var user = new User
@@ -42,13 +42,14 @@ namespace ShoppingCart.Services
             };
 
             await _userRepository.AddAsync(user);
+            _logger.LogInformation("User registered successfully with username {Username} and email {Email}", request.Username, request.Email);
             return ServiceResponse<bool>.Ok(true);
         }
         public async Task<ServiceResponse<List<UserResponseDto>>> GetUsers()
         {
             if (_currentUserService.Role != "Admin")
             {
-                _logger.LogWarning("Unauthorized access attempt by user {UserId} with role {Role}", _currentUserService.UserId, _currentUserService.Role);
+                _logger.LogWarning("Unauthorized user {UserId} with role {Role} attempted to retrieve users", _currentUserService.UserId, _currentUserService.Role);
                 return ServiceResponse<List<UserResponseDto>>.Fail("Unauthorized access.");
             }
             var userList = await _userRepository.GetAllAsync();
@@ -88,8 +89,8 @@ namespace ShoppingCart.Services
         {
             if(_currentUserService.Role != "Admin")
             {
-                _logger.LogWarning("Unauthorized access attempt by user {UserId} with role {Role}", _currentUserService.UserId, _currentUserService.Role);
-                return ServiceResponse<bool>.Fail("Unauthorized access.");
+                _logger.LogWarning("Unauthorized user {UserId} with role {Role} attempted to delete user {UserId}", _currentUserService.UserId, _currentUserService.Role, userId);
+                return ServiceResponse<bool>.Fail("Unauthorized access to delete user.");
             }
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null)
@@ -101,13 +102,12 @@ namespace ShoppingCart.Services
             _logger.LogInformation("User deleted successfully with id {UserId}", userId);
             return ServiceResponse<bool>.Ok(true);
         }
-
         public async Task<ServiceResponse<UserResponseDto>> UpdateUser(UpdateUserRequestDto request)
         {
             // Check if user is authenticated
             if (!_currentUserService.IsAuthenticated)
             {
-                _logger.LogWarning("Unauthorized access attempt by user {UserId} with role {Role}", _currentUserService.UserId, _currentUserService.Role);
+                _logger.LogWarning("Unauthenticated user {UserId} with role {Role}", _currentUserService.UserId, _currentUserService.Role);
                 return ServiceResponse<UserResponseDto>.Fail("User is not authenticated.");
             }
 
@@ -123,7 +123,7 @@ namespace ShoppingCart.Services
             // Allow users to update their own profile, or allow admins to update any user
             if (currentUserId != request.Id && _currentUserService.Role != "Admin")
             {
-                _logger.LogWarning("Unauthorized access attempt by user {UserId} with role {Role}", _currentUserService.UserId, _currentUserService.Role);
+                _logger.LogWarning("Unauthorized user {UserId} with role {Role} attempted to update user {UserId}", _currentUserService.UserId, _currentUserService.Role, request.Id);
                 return ServiceResponse<UserResponseDto>.Fail("You can only update your own profile.");
             }
 
