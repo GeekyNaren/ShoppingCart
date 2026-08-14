@@ -13,17 +13,20 @@ namespace ShoppingCart.Services
     {
         private readonly IConfiguration _config;
         private readonly IUserRepository _userRepository;
+        private readonly ILogger _logger;
 
-        public AuthService(IConfiguration config, IUserRepository userRepository)
+        public AuthService(IConfiguration config, IUserRepository userRepository, ILogger logger)
         {
             _config = config;
             _userRepository = userRepository;
+            _logger = logger;
         }
 
         public async Task<ServiceResponse<string?>> LoginAsync(UserLogin userLogin)
         {
             if (string.IsNullOrEmpty(userLogin.Username) || string.IsNullOrEmpty(userLogin.Password))
             {
+                _logger.LogWarning("Login attempt failed because of username or password missing.");
                 return ServiceResponse<string?>.Fail("Username and password are required.");
             }
             var user = await AuthenticateAsync(userLogin);
@@ -32,6 +35,7 @@ namespace ShoppingCart.Services
                 var token = GenerateToken(user);
                 return ServiceResponse<string?>.Ok(token);
             }
+            _logger.LogWarning("Login attempt failed due to invalid credentials for username {Username}", userLogin.Username);
             return ServiceResponse<string?>.Fail("Invalid username or password.");
         }
 
@@ -58,11 +62,13 @@ namespace ShoppingCart.Services
             var dbUser = await _userRepository.GetByUsernameAsync(userLogin.Username);
             if (dbUser == null)
             {
+                _logger.LogWarning("Authentication returned null for username {Username}", userLogin.Username);
                 return null;
             }
 
             if (!PasswordHelper.VerifyPassword(dbUser.PasswordHash, userLogin.Password))
             {
+                _logger.LogWarning("Authentication attempt failed for username {Username}", userLogin.Username);
                 return null;
             }
 
