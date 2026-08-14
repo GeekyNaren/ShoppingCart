@@ -88,8 +88,8 @@ namespace ShoppingCart.Services
         {
             if(_currentUserService.Role != "Admin")
             {
-                _logger.LogWarning("Unauthorized access attempt by user {UserId} with role {Role}", _currentUserService.UserId, _currentUserService.Role);
-                return ServiceResponse<bool>.Fail("Unauthorized access.");
+                _logger.LogWarning("Unauthorized user {UserId} with role {Role} attempted to delete user {UserId}", _currentUserService.UserId, _currentUserService.Role, userId);
+                return ServiceResponse<bool>.Fail("Unauthorized access to delete user.");
             }
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null)
@@ -101,7 +101,6 @@ namespace ShoppingCart.Services
             _logger.LogInformation("User deleted successfully with id {UserId}", userId);
             return ServiceResponse<bool>.Ok(true);
         }
-
         public async Task<ServiceResponse<UserResponseDto>> UpdateUser(UpdateUserRequestDto request)
         {
             // Check if user is authenticated
