@@ -11,10 +11,12 @@ namespace ShoppingCart.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly ICurrentUserService _currentUserService;
-        public UserService(IUserRepository userRepository, ICurrentUserService currentUserService)
+        private readonly ILogger<UserService> _logger;
+        public UserService(IUserRepository userRepository, ICurrentUserService currentUserService, ILogger<UserService> logger)
         {
             _userRepository = userRepository;
             _currentUserService = currentUserService;
+            _logger = logger;
         }
 
         #region Public Methods  
@@ -24,6 +26,7 @@ namespace ShoppingCart.Services
             var userList = await _userRepository.GetAllAsync();
             if (userList.Any(x => x.Username == request.Username || x.Email == request.Email))
             {
+                _logger.LogWarning("Attempt to register duplicate user with username {Username} and email {Email}", request.Username, request.Email);
                 return ServiceResponse<bool>.Fail("Username already exists with same credentials.");
             }
 
@@ -44,6 +47,7 @@ namespace ShoppingCart.Services
         {
             if (_currentUserService.Role != "Admin")
             {
+                _logger.LogWarning("Unauthorized access attempt by user {UserId} with role {Role}", _currentUserService.UserId, _currentUserService.Role);
                 return ServiceResponse<List<UserResponseDto>>.Fail("Unauthorized access.");
             }
             var userList = await _userRepository.GetAllAsync();
