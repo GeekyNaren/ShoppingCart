@@ -22,6 +22,7 @@ namespace ShoppingCart.Services
         #region Public Methods  
         public async Task<ServiceResponse<bool>> RegisterUser(UserRegisterRequestDto request)
         {
+            _logger.LogInformation("In register service attempting to register user with username {Username} and email {Email}", request.Username, request.Email);
             // Check for duplicate username or email without requiring Admin role
             var userList = await _userRepository.GetAllAsync();
             if (userList.Any(x => x.Username == request.Username || x.Email == request.Email))
@@ -51,6 +52,8 @@ namespace ShoppingCart.Services
                 return ServiceResponse<List<UserResponseDto>>.Fail("Unauthorized access.");
             }
             var userList = await _userRepository.GetAllAsync();
+            _logger.LogInformation("Retrieved {UserCount} users from the repository", userList);
+
             var dtos = userList.Select(u => new UserResponseDto
             {
                 Id = u.Id,
@@ -59,6 +62,7 @@ namespace ShoppingCart.Services
                 Role = u.Role,
                 CreatedAt = u.CreatedAt
             }).ToList();
+            _logger.LogInformation("Returning {UserCount} user dtos", dtos.Count);
             return ServiceResponse<List<UserResponseDto>>.Ok(dtos);
         }
         public async Task<ServiceResponse<UserResponseDto>> GetUserById(string userId)
@@ -66,6 +70,7 @@ namespace ShoppingCart.Services
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null)
             {
+                _logger.LogWarning("User not found with id {UserId}", userId);
                 return ServiceResponse<UserResponseDto>.Fail("User not found.");
             }
             var userDto = new UserResponseDto
@@ -76,20 +81,24 @@ namespace ShoppingCart.Services
                 Role = user.Role,
                 CreatedAt = user.CreatedAt
             };
+            _logger.LogInformation("Returning user dto for id {UserId}", userId);
             return ServiceResponse<UserResponseDto>.Ok(userDto);
         }
         public async Task<ServiceResponse<bool>> DeleteUser(string userId)
         {
             if(_currentUserService.Role != "Admin")
             {
+                _logger.LogWarning("Unauthorized access attempt by user {UserId} with role {Role}", _currentUserService.UserId, _currentUserService.Role);
                 return ServiceResponse<bool>.Fail("Unauthorized access.");
             }
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null)
             {
+                _logger.LogWarning("User not found with id {UserId}", userId);
                 return ServiceResponse<bool>.Fail("User not found.");
             }
             await _userRepository.DeleteAsync(userId);
+            _logger.LogInformation("User deleted successfully with id {UserId}", userId);
             return ServiceResponse<bool>.Ok(true);
         }
 
@@ -98,6 +107,7 @@ namespace ShoppingCart.Services
             // Check if user is authenticated
             if (!_currentUserService.IsAuthenticated)
             {
+                _logger.LogWarning("Unauthorized access attempt by user {UserId} with role {Role}", _currentUserService.UserId, _currentUserService.Role);
                 return ServiceResponse<UserResponseDto>.Fail("User is not authenticated.");
             }
 
@@ -106,12 +116,14 @@ namespace ShoppingCart.Services
 
             if (user == null)
             {
+                _logger.LogWarning("User not found with id {UserId}", request.Id);
                 return ServiceResponse<UserResponseDto>.Fail("User not found.");
             }
 
             // Allow users to update their own profile, or allow admins to update any user
             if (currentUserId != request.Id && _currentUserService.Role != "Admin")
             {
+                _logger.LogWarning("Unauthorized access attempt by user {UserId} with role {Role}", _currentUserService.UserId, _currentUserService.Role);
                 return ServiceResponse<UserResponseDto>.Fail("You can only update your own profile.");
             }
 
@@ -119,6 +131,7 @@ namespace ShoppingCart.Services
             var existingUsers = await _userRepository.GetAllAsync();
             if (existingUsers.Any(x => (x.Username == request.Username || x.Email == request.Email) && x.Id != request.Id))
             {
+                _logger.LogWarning("Username or Email already exists for user {UserId}", request.Id);
                 return ServiceResponse<UserResponseDto>.Fail("Username or Email already exists.");
             }
 
@@ -129,7 +142,7 @@ namespace ShoppingCart.Services
             {
                 user.PasswordHash = HashPassword(request.Password);
             }
-
+            _logger.LogInformation("Updating user with id {UserId}", request.Id);
             await _userRepository.UpdateAsync(request.Id, user);
 
             var userDto = new UserResponseDto
@@ -141,6 +154,7 @@ namespace ShoppingCart.Services
                 CreatedAt = user.CreatedAt
             };
 
+            _logger.LogInformation("Returning updated user dto for id {UserId}", request.Id);
             return ServiceResponse<UserResponseDto>.Ok(userDto);
         }
         #endregion
