@@ -3,6 +3,7 @@ using ShoppingCart.ExtensionService;
 using ShoppingCart.Interfaces;
 using ShoppingCart.Models;
 using ShoppingCart.Services.Helper;
+using Microsoft.Extensions.Logging;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -13,9 +14,9 @@ namespace ShoppingCart.Services
     {
         private readonly IConfiguration _config;
         private readonly IUserRepository _userRepository;
-        private readonly ILogger _logger;
+        private readonly ILogger<AuthService> _logger;
 
-        public AuthService(IConfiguration config, IUserRepository userRepository, ILogger logger)
+        public AuthService(IConfiguration config, IUserRepository userRepository, ILogger<AuthService> logger)
         {
             _config = config;
             _userRepository = userRepository;
