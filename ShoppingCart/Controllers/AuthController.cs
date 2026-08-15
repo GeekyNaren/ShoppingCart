@@ -10,7 +10,6 @@ namespace ShoppingCart.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
-
         public AuthController(IAuthService authService)
         {
             _authService = authService;
@@ -20,12 +19,12 @@ namespace ShoppingCart.Controllers
         [HttpPost]
         public async Task<ActionResult> Login([FromBody] UserLogin userLogin)
         {
-            var token = await _authService.LoginAsync(userLogin);
-            if (token != null)
+            var response = await _authService.LoginAsync(userLogin);
+            if (response == null || !response.Success)
             {
-                return Ok(token.Data);
+                return BadRequest(response);
             }
-            return NotFound("user not found");
+            return Ok(response.Data);
         }
     }
 }
