@@ -1,4 +1,5 @@
 using Moq;
+using Microsoft.Extensions.Logging;
 using ShoppingCart.Interfaces;
 using ShoppingCart.Models;
 using ShoppingCart.Models.Dtos;
@@ -17,13 +18,16 @@ namespace ShoppingCart.Tests.Services
         {
             var users = new List<User>
             {
-                new User { Id = "1", Username = "u1", Email = "e1@example.com", Role = "Customer", CreatedAt = DateTime.UtcNow }
+                new User { Id = "1", Username = "u1", Email = "e1@example.com", Role = Constants.Roles.Customer, CreatedAt = DateTime.UtcNow }
             };
 
             var repoMock = new Mock<IUserRepository>();
             repoMock.Setup(r => r.GetAllAsync()).ReturnsAsync(users);
 
-            var svc = new UserService(repoMock.Object);
+            var currentUserMock = new Mock<ICurrentUserService>();
+            var loggerMock = new Mock<ILogger<UserService>>();
+
+            var svc = new UserService(repoMock.Object, currentUserMock.Object, loggerMock.Object);
 
             var res = await svc.GetUsers();
 
@@ -38,13 +42,16 @@ namespace ShoppingCart.Tests.Services
         {
             var users = new List<User>
             {
-                new User { Id = "1", Username = "dup", Email = "dup@example.com", Role = "Customer", CreatedAt = DateTime.UtcNow }
+                new User { Id = "1", Username = "dup", Email = "dup@example.com", Role = Constants.Roles.Customer, CreatedAt = DateTime.UtcNow }
             };
 
             var repoMock = new Mock<IUserRepository>();
             repoMock.Setup(r => r.GetAllAsync()).ReturnsAsync(users);
 
-            var svc = new UserService(repoMock.Object);
+            var currentUserMock = new Mock<ICurrentUserService>();
+            var loggerMock = new Mock<ILogger<UserService>>();
+
+            var svc = new UserService(repoMock.Object, currentUserMock.Object, loggerMock.Object);
 
             var request = new UserRegisterRequestDto
             {
@@ -72,7 +79,10 @@ namespace ShoppingCart.Tests.Services
                 return Task.CompletedTask;
             });
 
-            var svc = new UserService(repoMock.Object);
+            var currentUserMock = new Mock<ICurrentUserService>();
+            var loggerMock = new Mock<ILogger<UserService>>();
+
+            var svc = new UserService(repoMock.Object, currentUserMock.Object, loggerMock.Object);
 
             var request = new UserRegisterRequestDto
             {
