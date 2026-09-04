@@ -7,9 +7,7 @@ namespace ShoppingCart.ExtensionService
         public string Message { get; set; } = string.Empty;
         //public List<string> Errors { get; set; } = new List<string>();
         public List<string> Errors { get; set; } = [];
-
         public ServiceResponse() { }
-
         public ServiceResponse(T data)
         {
             Data = data;
