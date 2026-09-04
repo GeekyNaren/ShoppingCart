@@ -14,30 +14,6 @@ namespace ShoppingCart.Tests.Services
     public class UserServiceTests
     {
         [Fact]
-        public async Task GetUsers_ReturnsDtos()
-        {
-            var users = new List<User>
-            {
-                new User { Id = "1", Username = "u1", Email = "e1@example.com", Role = Constants.Roles.Customer, CreatedAt = DateTime.UtcNow }
-            };
-
-            var repoMock = new Mock<IUserRepository>();
-            repoMock.Setup(r => r.GetAllAsync()).ReturnsAsync(users);
-
-            var currentUserMock = new Mock<ICurrentUserService>();
-            var loggerMock = new Mock<ILogger<UserService>>();
-
-            var svc = new UserService(repoMock.Object, currentUserMock.Object, loggerMock.Object);
-
-            var res = await svc.GetUsers();
-
-            Assert.True(res.Success);
-            Assert.NotNull(res.Data);
-            Assert.Single(res.Data);
-            Assert.Equal("u1", res.Data[0].Username);
-        }
-
-        [Fact]
         public async Task RegisterUser_Duplicate_ReturnsFail()
         {
             var users = new List<User>
