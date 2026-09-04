@@ -11,13 +11,11 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Bind MongoSettings
-builder.Services.Configure<MongoSettings>(
-    builder.Configuration.GetSection("MongoSettings"));
+builder.Services.Configure<MongoSettings>(builder.Configuration.GetSection("MongoSettings"));
 
 var mongoSettings = builder.Configuration.GetSection("MongoSettings").Get<MongoSettings>();
 
-builder.Services.AddSingleton<IMongoClient>(sp =>
-    new MongoClient(mongoSettings.ConnectionString));
+builder.Services.AddSingleton<IMongoClient>(sp => new MongoClient(mongoSettings.ConnectionString));
 
 builder.Services.AddSingleton(sp =>
 {
