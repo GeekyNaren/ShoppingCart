@@ -1,0 +1,19 @@
+﻿namespace ShoppingCart.Models.Dtos
+{
+    public class AddProductDto
+    {
+        public string Name { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public decimal Price { get; set; } = 0;
+        public string? Category { get; set; }
+        public int StockQuantity { get; set; }
+        public string? CategoryId { get; set; }
+        public string? Brand { get; set; }
+        public decimal? DiscountPrice { get; set; }
+        public List<string> ImageUrls { get; set; } = [];
+        public Dictionary<string, string> Specifications { get; set; } = [];
+        public double? AverageRating { get; set; }
+        public int? ReviewCount { get; set; }
+        public bool? IsActive { get; set; } = true;
+    }
+}

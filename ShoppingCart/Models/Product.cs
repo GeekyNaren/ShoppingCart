@@ -8,6 +8,13 @@
         public decimal Price { get; set; }
         public string Category { get; set; }
         public int StockQuantity { get; set; }
-        public string ImageUrl { get; set; }
+        public string CategoryId { get; set; }
+        public string Brand { get; set; }
+        public decimal? DiscountPrice { get; set; }
+        public List<string> ImageUrls { get; set; } = [];
+        public Dictionary<string, string> Specifications { get; set; } = [];
+        public double AverageRating { get; set; }
+        public int ReviewCount { get; set; }
+        public bool IsActive { get; set; } = true;
     }
 }

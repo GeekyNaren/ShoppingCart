@@ -1,6 +1,8 @@
-﻿namespace ShoppingCart.Interfaces
+﻿using ShoppingCart.Models;
+
+namespace ShoppingCart.Interfaces
 {
-    public interface IProductRepository
+    public interface IProductRepository : IBaseMongoRepository<Product>
     {
     }
 }
