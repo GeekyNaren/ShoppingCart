@@ -87,7 +87,7 @@ namespace ShoppingCart.Services
         }
         public async Task<ServiceResponse<bool>> DeleteUser(string userId)
         {
-            if(_currentUserService.Role != "Admin")
+            if(_currentUserService.Role != Constants.Roles.Admin)
             {
                 _logger.LogWarning("Unauthorized user {UserId} with role {Role} attempted to delete user {UserId}", _currentUserService.UserId, _currentUserService.Role, userId);
                 return ServiceResponse<bool>.Fail("Unauthorized access to delete user.");
