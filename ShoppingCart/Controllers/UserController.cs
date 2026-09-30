@@ -46,14 +46,6 @@ namespace ShoppingCart.Controllers
             return Ok(response);
         }
 
-        [HttpDelete("deleteUser")]
-        [Authorize]
-        public async Task<ActionResult> DeleteUser(string userId)
-        {
-            var response = await _userService.DeleteUser(userId);
-            return Ok(response);
-        }
-
         [HttpPut("updateUser")]
         [Authorize]
         public async Task<ActionResult> UpdateUser([FromBody] UpdateUserRequestDto request)
@@ -66,6 +58,13 @@ namespace ShoppingCart.Controllers
             return Ok(response);
         }
 
+        [HttpDelete("deleteUser")]
+        [Authorize]
+        public async Task<ActionResult> DeleteUser(string userId)
+        {
+            var response = await _userService.DeleteUser(userId);
+            return Ok(response);
+        }
         ////For admin Only
         //[HttpGet]
         //[Route("Admins")]
