@@ -1,4 +1,4 @@
-﻿namespace ShoppingCart.Models
+﻿namespace ShoppingCart.Models.Entities
 {
     public class UserLogin
     {

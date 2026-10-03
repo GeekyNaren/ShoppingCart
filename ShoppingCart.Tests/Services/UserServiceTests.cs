@@ -1,13 +1,13 @@
 using Moq;
 using Microsoft.Extensions.Logging;
 using ShoppingCart.Interfaces;
-using ShoppingCart.Models;
 using ShoppingCart.Models.Dtos;
 using ShoppingCart.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
+using ShoppingCart.Models.Entities;
 
 namespace ShoppingCart.Tests.Services
 {

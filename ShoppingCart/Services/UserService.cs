@@ -2,6 +2,7 @@
 using ShoppingCart.Interfaces;
 using ShoppingCart.Models;
 using ShoppingCart.Models.Dtos;
+using ShoppingCart.Models.Entities;
 using System.Security.Cryptography;
 using System.Text;
 

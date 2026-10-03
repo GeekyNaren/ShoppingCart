@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShoppingCart.Interfaces;
-using ShoppingCart.Models;
+using ShoppingCart.Models.Entities;
 
 namespace ShoppingCart.Controllers
 {
