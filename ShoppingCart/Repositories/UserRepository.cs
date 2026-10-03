@@ -1,6 +1,6 @@
 ﻿using MongoDB.Driver;
 using ShoppingCart.Interfaces;
-using ShoppingCart.Models;
+using ShoppingCart.Models.Entities;
 
 namespace ShoppingCart.Repositories
 {

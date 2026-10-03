@@ -1,5 +1,5 @@
 using ShoppingCart.Interfaces;
-using ShoppingCart.Models;
+using ShoppingCart.Models.Entities;
 using System.Security.Claims;
 
 namespace ShoppingCart.Services

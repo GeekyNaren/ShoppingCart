@@ -1,12 +1,12 @@
 using Microsoft.IdentityModel.Tokens;
 using ShoppingCart.ExtensionService;
 using ShoppingCart.Interfaces;
-using ShoppingCart.Models;
 using ShoppingCart.Services.Helper;
 using Microsoft.Extensions.Logging;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using ShoppingCart.Models.Entities;
 
 namespace ShoppingCart.Services
 {
